@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import UpdateStorageContext from "../context/UpdateStorageContext";
 import html2canvas from "html2canvas";
 import * as lucide from "lucide-react";
@@ -6,6 +6,25 @@ import * as lucide from "lucide-react";
 function LogoPreview({ downloadIcon }) {
   const { updateStorage } = useContext(UpdateStorageContext);
   const previewRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const containerRef = useRef(null);
+
+  // Calculate scale based on container size
+  useEffect(() => {
+    const updateScale = () => {
+      if (containerRef.current) {
+        const container = containerRef.current;
+        const containerSize = Math.min(container.clientWidth, container.clientHeight) - 32;
+        const logoSize = (updateStorage?.iconSize || 280) + (updateStorage?.padding || 24) * 2;
+        const newScale = Math.min(0.8, containerSize / logoSize);
+        setScale(newScale);
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [updateStorage]);
 
   useEffect(() => {
     if (downloadIcon) {
@@ -37,8 +56,7 @@ function LogoPreview({ downloadIcon }) {
       x: 50,
       y: 50,
     },
-    selectedImage,
-  } = updateStorage || JSON.parse(localStorage.getItem("value")) || {};
+  } = updateStorage || {};
 
   const IconComponent = icon ? lucide[icon] : null;
 
@@ -48,52 +66,39 @@ function LogoPreview({ downloadIcon }) {
     }
 
     const { start, end } = gradientColors;
-    switch (gradientType) {
-      case "linear":
-        return `linear-gradient(${gradientAngle}deg, ${start}, ${end})`;
-      case "radial":
-        return `radial-gradient(circle at ${gradientPosition.x}% ${gradientPosition.y}%, ${start}, ${end})`;
-      case "conic":
-        return `conic-gradient(from ${gradientAngle}deg at ${gradientPosition.x}% ${gradientPosition.y}%, ${start}, ${end})`;
-      default:
-        return `linear-gradient(${gradientAngle}deg, ${start}, ${end})`;
-    }
+    return `linear-gradient(${gradientAngle}deg, ${start}, ${end})`;
   };
 
   return (
-    <div className="h-full flex items-center justify-center bg-[#f8f9fb] dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+    <div ref={containerRef} className="h-full w-full flex items-center justify-center relative p-2">
+      <div className="absolute inset-0 grid place-items-center">
+        <div className="w-12 h-12 border-2 border-gray-200 dark:border-gray-700 rounded-lg opacity-10"></div>
+      </div>
       <div
         ref={previewRef}
-        className="relative flex items-center justify-center"
         style={{
-          width: iconSize * 2,
-          height: iconSize * 2,
+          width: `${iconSize + padding * 2}px`,
+          height: `${iconSize + padding * 2}px`,
           background: getBackgroundStyle(),
           borderRadius: `${rounded}px`,
-          padding: `${padding}px`,
+          transform: `scale(${scale})`,
+          boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+          transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out',
         }}
+        className="relative flex items-center justify-center hover:shadow-md"
       >
-        {IconComponent && !selectedImage ? (
+        {IconComponent && (
           <IconComponent
             style={{
-              width: "100%",
-              height: "100%",
+              transform: `rotate(${iconRotate}deg)`,
               color: iconColor,
-              transform: `rotate(${iconRotate}deg)`,
+              width: '100%',
+              height: '100%',
+              padding: `${padding}px`,
+              transition: 'all 0.2s ease',
             }}
           />
-        ) : selectedImage ? (
-          <img
-            src={selectedImage}
-            alt="Logo"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-              transform: `rotate(${iconRotate}deg)`,
-            }}
-          />
-        ) : null}
+        )}
       </div>
     </div>
   );

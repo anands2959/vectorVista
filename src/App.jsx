@@ -55,37 +55,40 @@ function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="logo-maker-theme">
       <UpdateStorageContext.Provider value={{ updateStorage, setUpdateStorage }}>
-        <div className="h-screen flex flex-col bg-background dark:bg-gray-900">
+        <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
           {/* Header - Fixed */}
-          <div className="flex-none">
+          <div className="flex-none border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
             <Header downloadIcon={() => setDownloadIcon(prev => !prev)} />
           </div>
           
           {/* Main Content - Fill remaining height */}
-          <div className="flex-1 flex overflow-hidden">
-            {/* Sidebar - Fixed width */}
-            <div className="w-64 flex-none bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            {/* Sidebar - Fixed width on desktop, full width on mobile */}
+            <div className="lg:w-72 flex-none bg-white dark:bg-gray-900 border-b lg:border-r border-gray-200 dark:border-gray-800 shadow-sm">
               <div className="h-full">
                 <SideNav selectedIndex={(value) => setIndexselected(value)} />
               </div>
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden bg-gray-50 dark:bg-gray-900">
               <div className="h-full">
-                <div className="h-full grid grid-cols-1 lg:grid-cols-12">
+                <div className="h-full flex flex-col lg:grid lg:grid-cols-12 lg:gap-0">
                   {/* Controller Section - Scrollable */}
-                  <div className="lg:col-span-5 h-full overflow-hidden border-r border-gray-200 dark:border-gray-700">
-                    <div className="h-full overflow-y-auto bg-white dark:bg-gray-800">
+                  <div className="lg:col-span-5 h-[65vh] lg:h-full overflow-hidden border-b lg:border-r border-gray-200 dark:border-gray-800">
+                    <div className="h-full overflow-y-auto bg-white dark:bg-gray-900 shadow-sm">
                       {getActiveComponent()}
                     </div>
                   </div>
 
-                  {/* Preview Section - Fixed */}
-                  <div className="lg:col-span-7 h-full bg-white dark:bg-gray-800 p-6">
-                    <div className="h-full flex flex-col">
-                      <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4 flex-none">Preview</h3>
-                      <div className="flex-1 overflow-hidden">
+                  {/* Preview Section */}
+                  <div className="lg:col-span-7 h-[35vh] lg:h-full bg-white dark:bg-gray-900 shadow-sm">
+                    <div className="h-full flex flex-col p-2 sm:p-3 lg:p-6">
+                      <div className="flex items-center justify-between mb-1 lg:mb-4">
+                        <h3 className="text-sm lg:text-lg font-semibold text-gray-900 dark:text-gray-100">Preview</h3>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Drag to resize</span>
+                      </div>
+                      <div className="flex-1 overflow-hidden bg-[#f8fafc] dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
                         <LogoPreview downloadIcon={downloadIcon} />
                       </div>
                     </div>

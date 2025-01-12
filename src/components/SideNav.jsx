@@ -26,8 +26,8 @@ function SideNav({ selectedIndex }) {
   }, []); 
 
   return (
-    <div className="h-full py-4">
-      <nav className="space-y-1">
+    <div className="h-full py-2 lg:py-4">
+      <nav className="flex lg:flex-col gap-1.5 lg:gap-1 px-2 lg:px-3">
         {manuList.map((menu, index) => (
           <button
             onClick={() => {
@@ -35,14 +35,14 @@ function SideNav({ selectedIndex }) {
               selectedIndex(index);
             }}
             key={index}
-            className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+            className={`flex-1 lg:w-full flex items-center justify-center lg:justify-start gap-2 lg:gap-3 px-3 lg:px-4 py-2.5 lg:py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
               activeIndex == index
-                ? "bg-[#3333cc] text-white"
-                : "text-gray-600 hover:bg-gray-50"
+                ? "bg-primary text-white shadow-sm dark:shadow-none"
+                : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
             }`}
           >
             <menu.icon className="h-5 w-5" />
-            {menu.name}
+            <span className="hidden lg:inline tracking-wide">{menu.name}</span>
           </button>
         ))}
       </nav>
