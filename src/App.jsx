@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Header from "./components/header";
+import Header from "./components/Header";
 import SideNav from "./components/SideNav";
 import BackgroundController from "./components/BackgroundController";
 import IconController from "./components/IconController";
